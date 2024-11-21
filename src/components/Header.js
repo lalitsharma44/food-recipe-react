@@ -1,7 +1,8 @@
 import React from "react";
+import '../App.css';
 
 const Header = props => {
-	const {search, onInputChange} = props;
+	const {search, onInputChange, getRecipes} = props;
 	return (
 		<div className="jumbotron">
 		<h1 className="display-1">
@@ -16,7 +17,7 @@ const Header = props => {
          onChange={onInputChange}
          />
          <div className="input-group-append">
-         <button className="btn btn-dark">Search Recipe</button>
+         <button onClick={getRecipes} className="btn btn-dark">Search Recipe</button>
         </div>
      </div>
 		</div>
@@ -25,45 +26,3 @@ const Header = props => {
 };
 
 export default Header;
-
-
-
-
-    //script solution//
-
-    <html>
-    <body onload="myFunction()">
-
-    Date: <input type="text" id="demo"/>
-
-    <script>
-      function myFunction() {
-        document.getElementById('demo').value= Date();
-      }
-
-      </script>
-      </body>
-      </html>
-
-
-      ///jquery//
-
-      <html>
-      <head>
-      <script>
-      </script>
-      </head>
-      <body onload="myFunction()">
-    Date: <input type="text" id="demo"/>
-<script>
-function myFunction(){
-    $(document).ready(function(){
-        $('demo').attr("placeholder", Date());
-    });
-
-}
-</script>
-</body>
-</html>
-
-}      

@@ -17,7 +17,7 @@ function App() {
     }, []);
 
     const getRecipes = async () => {
-      const res = await Axios.get('https://api.edamam.com/search?q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}');
+      const res = await Axios.get(`https://api.edamam.com/search?q=${search}&app_id=${APP_ID}&app_key=${APP_KEY}`);
    
       setRecipes(res.data.hits);
     };
@@ -25,13 +25,12 @@ function App() {
 
    const onInputChange = e => {
     setSerach(e.target.value);
-   
    };
 
   return (
     <div className="App">
-      <Header search={search} onInputChange={onInputChange} />
-      <div className="container">
+      <Header search={search} onInputChange={onInputChange} getRecipes={getRecipes} />
+      <div className="container-1">
       <Recipes recipes={recipes} />
       </div>
     </div>
