@@ -1,71 +1,33 @@
-name: CI/CD Pipeline
+name: Build and Deploy React App
 
 on:
   push:
     branches:
       - main
-      - develop
   pull_request:
-    branches:
-      - main
-      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: yarn
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16  # Specify your Node.js version
 
-      # Step 3: Install dependencies
-      - name: Install Dependencies
-        run: yarn install
+    - name: Install dependencies
+      run: npm install
 
-      # Step 4: Run tests with coverage
-      - name: Run Tests
-        run: yarn test --coverage
+    - name: Build the application
+      run: npm run build
 
-      # Step 5: Run linter
-      - name: Run Linter
-        run: yarn lint
-        env:
-          CI: true
-
-      # Step 6: Build the project
-      - name: Build Project
-        run: yarn build
-
-      # Step 7: SonarQube code quality scan
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        with:
-          args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.exclusions=**/*.test.tsx,**/__tests__/**
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-      # Step 8: Deploy to Vercel (Only on `main` or `develop` branches)
-      - name: Deploy to Vercel
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          npm install -g vercel
-          vercel --prod --token=$VERCEL_TOKEN --yes --name my-react-app
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build  # The default React build output directory
